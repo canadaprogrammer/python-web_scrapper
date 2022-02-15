@@ -6,17 +6,34 @@
 
 2. Add path
 
-3. Environment variables
+   1. Environment variables
 
-4. Edit Path on System variables
+   2. Edit Path on System variables
 
-5. Add the path:
+   3. Add the path:
 
+      - C:\Users\jinpa\AppData\Local\Programs\Python\Python310
 
-    - C:\Users\jinpa\AppData\Local\Programs\Python\Python310
-
-    - C:\Users\jinpa\AppData\Local\Programs\Python\Python310\Scripts
+      - C:\Users\jinpa\AppData\Local\Programs\Python\Python310\Scripts
 
 3. Check the version
 
-- python -V
+   - python -V
+
+## Install Packages
+
+- Request: HTTP for Humans
+
+  - python -m pip install requests
+
+- beautifulsoup4
+
+  - python -m pip install beautifulsoup4
+
+- ```python
+  import requests
+
+  costco_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50', timeout=30)
+
+  print(costco_results.text)
+  ```
