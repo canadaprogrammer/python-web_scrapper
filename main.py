@@ -1,18 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 
-indeed_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50', timeout=30)
+indeed_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50&start=99999', timeout=30)
 
 indeed_soup = BeautifulSoup(indeed_results.text, 'html.parser')
 
 pagination = indeed_soup.find('div', {'class': 'pagination'})
 
-pages = pagination.find_all('a')
+links = pagination.find_all('a')
 
-spans = []
+pages = []
 
-for page in pages:
-  spans.append(page.find('span'))
+for link in links[1:]:
+  # pages.append(link.find('span').string)
+  pages.append(int(link.string))
 
-# exclude the last one
-print(spans[:-1])
+max_page = pages[-1]

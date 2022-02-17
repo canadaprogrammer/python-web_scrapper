@@ -39,9 +39,9 @@
 - ```python
   import requests
 
-  costco_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50', timeout=30)
+  indeed_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50', timeout=30)
 
-  print(costco_results.text)
+  print(indeed_results.text)
   ```
 
 ## Pull data out of HTML
@@ -66,3 +66,21 @@
   # exclude the last one
   print(spans[:-1])
   ```
+
+## Get the last page number
+
+- The first page of Indeed is showing only five pages on the pagination
+
+  - To get the last page number is `start=99999` on the URL
+
+  - ```python
+    indeed_results = requests.get('https://www.indeed.com/jobs?q=python&limit=50&start=99999', timeout=30)
+
+    ...
+
+    for link in links[1:]:
+      # pages.append(link.find('span').string)
+      pages.append(int(link.string))
+
+    max_page = pages[-1]
+    ```
