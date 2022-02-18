@@ -19,6 +19,16 @@ def extract_indeed_pages():
   return max_page
 
 def extract_indeed_jobs(last_page):
+  jobs = []
   for page in range(last_page):
-    results = requests.get(URL + f'&start={page * LIMIT}', timeout=30)
-    print(results.status_code)
+    html = requests.get(f'{URL}&start={page * LIMIT}', timeout=30)
+    soup = BeautifulSoup(html.text, 'html.parser')
+    results = soup.find_all('a', {'class': 'resultWithShelf'})
+    for result in results:
+      title = result.find('h2', {'class': 'jobTitle'})
+      span = title.find_all('span')
+      for s in span:
+        if s.get('title') is None:
+          continue
+        jobs.append(s.get('title'))
+  return jobs
