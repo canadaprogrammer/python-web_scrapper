@@ -138,11 +138,27 @@
         soup = BeautifulSoup(html.text, 'html.parser')
         results = soup.find_all('a', {'class': 'resultWithShelf'})
         for result in results:
-          title = result.find('h2', {'class': 'jobTitle'})
-          span = title.find_all('span')
+          span = result.find('h2', {'class': 'jobTitle'}).find_all('span')
           for s in span:
             if s.get('title') is None:
               continue
             jobs.append(s.get('title'))
       return jobs
+    ```
+
+## Extract Companies
+
+- On `indeed.py`
+
+  - ```python
+    ...
+    for result in results:
+      span = result.find('h2', {'class': 'jobTitle'}).find_all('span')
+      for s in span:
+        if s.get('title') is None:
+          continue
+        title = s.get('title')
+      # strip(): remove spaces from the front and back like trim()
+      company = (result.find('span', {'class': 'companyName'}).string).strip()
+      print(f'Title: {title},\nCompany Name: {company.strip()}')
     ```

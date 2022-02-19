@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-LIMIT = 50
+LIMIT = 5
 URL = f"https://www.indeed.com/jobs?q=python&limit={LIMIT}"
 
 def extract_indeed_pages():
@@ -20,15 +20,17 @@ def extract_indeed_pages():
 
 def extract_indeed_jobs(last_page):
   jobs = []
-  for page in range(last_page):
+  for page in range(1):
     html = requests.get(f'{URL}&start={page * LIMIT}', timeout=30)
     soup = BeautifulSoup(html.text, 'html.parser')
     results = soup.find_all('a', {'class': 'resultWithShelf'})
     for result in results:
-      title = result.find('h2', {'class': 'jobTitle'})
-      span = title.find_all('span')
+      span = result.find('h2', {'class': 'jobTitle'}).find_all('span')
       for s in span:
         if s.get('title') is None:
           continue
-        jobs.append(s.get('title'))
+        title = s.get('title')
+      # strip(): remove spaces from the front and back like trim()
+      company = (result.find('span', {'class': 'companyName'}).string).strip()
+      print(f'Title: {title},\nCompany Name: {company}')
   return jobs
