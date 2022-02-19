@@ -162,3 +162,30 @@
       company = (result.find('span', {'class': 'companyName'}).string).strip()
       print(f'Title: {title},\nCompany Name: {company.strip()}')
     ```
+
+## Encapsulate Extract Job
+
+- On `indeed.py`
+
+  - ```python
+    def extract_job(result):
+      span = result.find('h2', {'class': 'jobTitle'}).find_all('span')
+      for s in span:
+        if s.get('title') is None:
+          continue
+        title = s.get('title')
+      company = (result.find('span', {'class': 'companyName'}).string).strip()
+      return {'title': title, 'company': company}
+
+    def extract_indeed_jobs(last_page):
+      jobs = []
+      for page in range(1):
+        print(f'Scrapping page {page + 1}')
+        html = requests.get(f'{INDEED_URL}&start={page * LIMIT}', timeout=30)
+        soup = BeautifulSoup(html.text, 'html.parser')
+        results = soup.find_all('a', {'class': 'resultWithShelf'})
+        for result in results:
+          job = extract_job(result)
+          jobs.append(job)
+      return jobs
+    ```
