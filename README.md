@@ -189,3 +189,15 @@
           jobs.append(job)
       return jobs
     ```
+
+## Extract Locations and Links
+
+- On `indeed.py`
+
+  - ```python
+    def extract_job(result):
+      ...
+      location = result.find('div', {'class': 'companyLocation'}).text
+      job_key = result.get('data-jk')
+      return {'title': title, 'company': company, 'location': location, 'link': f'https://ca.indeed.com/viewjob?jk={job_key}'}
+    ```

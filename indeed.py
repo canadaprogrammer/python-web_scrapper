@@ -26,7 +26,10 @@ def extract_job(result):
     title = s.get('title')
   # strip(): remove spaces from the front and back like trim()
   company = (result.find('span', {'class': 'companyName'}).string).strip()
-  return {'title': title, 'company': company}
+  location = result.find('div', {'class': 'companyLocation'}).text
+  job_key = result.get('data-jk')
+  return {'title': title, 'company': company, 'location': location, 'link': f'https://ca.indeed.com/viewjob?jk={job_key}'}
+
 def extract_indeed_jobs(last_page):
   jobs = []
   for page in range(1):
