@@ -1,22 +1,23 @@
 import requests
 from bs4 import BeautifulSoup
 
-LIMIT = 3
+LIMIT = 50
 INDEED_URL = f"https://ca.indeed.com/jobs?q=web%20developer&l=Victoria%2C%20BC&limit={LIMIT}"
 
 def get_last_page():
   results = requests.get(INDEED_URL + '&start=99999', timeout=30)
   soup = BeautifulSoup(results.text, 'html.parser')
   pagination = soup.find('div', {'class': 'pagination'})
+  if pagination is not None:
+    links = pagination.find_all('a')
+    pages = []
+    for link in links[1:]:
+      pages.append(int(link.string))
 
-  links = pagination.find_all('a')
-  pages = []
-  for link in links[1:]:
-    # pages.append(link.find('span').string)
-    pages.append(int(link.string))
-
-  max_page = pages[-1]
-  return max_page
+    max_page = pages[-1]
+    return max_page
+  else:
+    return 1
 
 def get_job(result):
   span = result.find('h2', {'class': 'jobTitle'}).find_all('span')
@@ -32,8 +33,8 @@ def get_job(result):
 
 def get_jobs(last_page):
   jobs = []
-  for page in range(1):
-    print(f'Scrapping page {page + 1}')
+  for page in range(last_page):
+    print(f'Scrapping Indeed page {page + 1}')
     html = requests.get(f'{INDEED_URL}&start={page * LIMIT}', timeout=30)
     soup = BeautifulSoup(html.text, 'html.parser')
     results = soup.find_all('a', {'class': 'resultWithShelf'})

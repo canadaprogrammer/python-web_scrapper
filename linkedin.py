@@ -12,7 +12,6 @@ def get_job(result):
 
 def get_jobs():
   jobs = []
-  print('Scrapping page 1')
   html = requests.get(f'{LINKEDIN_URL}', timeout=30)
   soup = BeautifulSoup(html.text, 'html.parser')
   results = soup.find_all('div', {'class': 'job-search-card'})

@@ -210,7 +210,7 @@
     import requests
     from bs4 import BeautifulSoup
 
-    LINKEDIN_URL = f"https://ca.linkedin.com/jobs/search?keywords=Web%20Developer&location=Victoria%2C%20British%20Columbia%2C%20Canada&distance=100&position=1&pageNum=0"
+    LINKEDIN_URL = f"https://ca.linkedin.com/jobs/search?keywords=web%20developer&location=Victoria%2C%20British%20Columbia%2C%20Canada&geoId=&trk=homepage-jobseeker_jobs-search-bar_search-submit&position=1&pageNum=0"
 
     def get_job(result):
       title = (result.find('h3', {'class': 'base-search-card__title'}).string).strip()
@@ -233,4 +233,52 @@
     def get_linkedin_jobs():
       jobs = get_jobs()
       return jobs
+    ```
+
+## Fix Get Last Page from Indeed
+
+- On `indeed.py`
+
+  - ```python
+    def get_last_page():
+      results = requests.get(INDEED_URL + '&start=99999', timeout=30)
+      soup = BeautifulSoup(results.text, 'html.parser')
+      pagination = soup.find('div', {'class': 'pagination'})
+      if pagination is not None:
+        links = pagination.find_all('a')
+        pages = []
+        for link in links[1:]:
+          pages.append(int(link.string))
+
+        max_page = pages[-1]
+        return max_page
+      else:
+        return 1
+    ```
+
+## Save Jobs to CSV
+
+- Create `save.py`
+
+  - ```python
+    import csv
+
+    def save_to_file(jobs):
+      file = open('jobs.csv', mode='w', encoding='UTF-8',newline='')
+      writer = csv.writer(file)
+      writer.writerow(['title', 'company', 'location', 'link'])
+      for job in jobs:
+        writer.writerow(list(job.values()))
+      return
+    ```
+
+- On `main.py`
+
+  - ```python
+    from save import save_to_file
+
+    ...
+
+    jobs = indeed_jobs + linkedin_jobs
+    save_to_file(jobs)
     ```
